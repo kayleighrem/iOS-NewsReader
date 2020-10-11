@@ -8,9 +8,33 @@
 import SwiftUI
 
 struct ContentView: View {
+    @ObservedObject var newsReaderAPI = NewsReaderAPI.shared
+    
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        VStack {
+            if newsReaderAPI.isAuthenticated {
+                Text("We are logged in")
+                    .navigationBarItems(leading: Button(action: {
+                        newsReaderAPI.logout()
+                    }, label: {
+                        Image(systemName: "escape")
+                    }),
+                    trailing: NavigationLink(
+                        destination: Text("Favorite Articles"),
+                        label: {
+                            Image(systemName: "star")
+                        }
+                    )
+                )
+            } else {
+                Text("We need to log in")
+                    .navigationBarItems(trailing: NavigationLink( destination: LoginView(),
+                        label: {
+                            Text("Log in")
+                        }
+                    ))
+            }
+        }.navigationTitle("News Reader")
     }
 }
 
