@@ -11,6 +11,7 @@ import KeychainAccess
 
 final class NewsReaderAPI: ObservableObject {
     static let shared = NewsReaderAPI()
+    private let baseURL = "http://inhollandbackend.azurewebsites.net/api"
     
     @Published var isAuthenticated: Bool = false
     
@@ -38,12 +39,61 @@ final class NewsReaderAPI: ObservableObject {
         isAuthenticated = accessToken != nil
     }
     
+    
+    // (POST)Users/register
+    func register(
+        username: String,
+        password: String,
+        completion: @escaping (Result<RegisterResponse, RequestError>) -> Void
+    ) {
+        let fullurl: String = baseURL + "/Users/register"
+        let url = URL(string: fullurl)!
+        
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest.httpMethod = "POST"
+        
+        let parameters = RegisterRequest (
+            username: username,
+            password: password
+        )
+        
+        let encoder = JSONEncoder()
+        guard let body = try? encoder.encode(parameters) else { return }
+        urlRequest.httpBody = body
+        
+        cancellable = URLSession.shared.dataTaskPublisher(for: urlRequest)
+            .map { $0.data }
+            .decode(type: RegisterResponse.self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { (result) in
+                switch result {
+                case .finished:
+                    break
+                case .failure(let error):
+                    switch error {
+                        case let urlError as URLError:
+                            completion(.failure(.urlError(urlError)))
+                        case let decodingError as DecodingError:
+                            completion(.failure(.decodingError(decodingError)))
+                        default:
+                            completion(.failure(.genericError(error)))
+                    }
+                }
+            }, receiveValue: { (resonse) in
+                completion(.success(resonse))
+            })
+
+    }
+    
+    // (POST)Users/login
     func login(
         username: String,
         password: String,
         completion: @escaping (Result<LoginResponse, RequestError>) -> Void
     ) {
-        let url = URL(string: "https://inhollandbackend.azurewebsites.net/api/Users/login")!
+        let fullurl: String = baseURL + "/Users/login"
+        let url = URL(string: fullurl)!
         
         var urlRequest = URLRequest(url: url)
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")

@@ -28,11 +28,17 @@ struct ContentView: View {
                 )
             } else {
                 Text("We need to log in")
-                    .navigationBarItems(trailing: NavigationLink( destination: LoginView(),
+                    .navigationBarItems(leading: NavigationLink( destination: LoginView(),
                         label: {
                             Text("Log in")
                         }
-                    ))
+                    ),
+                    trailing: NavigationLink(
+                        destination: RegisterView(),
+                        label: {
+                            Text("Register")
+                        })
+                    )
             }
         }.navigationTitle("News Reader")
     }
