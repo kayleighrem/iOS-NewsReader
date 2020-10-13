@@ -11,7 +11,7 @@ import KeychainAccess
 
 final class NewsReaderAPI: ObservableObject {
     static let shared = NewsReaderAPI()
-    private let baseURL = "http://inhollandbackend.azurewebsites.net/api"
+    private let baseURL = "https://inhollandbackend.azurewebsites.net/api"
     
     @Published var isAuthenticated: Bool = false
     
@@ -133,6 +133,48 @@ final class NewsReaderAPI: ObservableObject {
     
     func logout() {
         accessToken = nil
+    }
+    
+    
+    // (GET)Articles
+    func getArticles(completion: @escaping (Result<[Articles], RequestError>) -> Void) {
+        let fullurl: String = baseURL + "/Articles"
+        let url = URL(string: fullurl)!
+        
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest.httpMethod = "GET"
+        
+//        let parameters = ArticleRequest (
+//            username: username,
+//            password: password
+//        )
+        
+        let encoder = JSONEncoder()
+//        guard let body = try? encoder.encode(parameters) else { return }
+//        urlRequest.httpBody = body
+        
+        cancellable = URLSession.shared.dataTaskPublisher(for: urlRequest)
+            .map({ $0.data })
+            .decode(type: GetArticleResponse.self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { result in
+                switch result {
+                    case .finished:
+                        break
+                    case .failure(let error):
+                        switch result {
+                            case let urlError as URLError:
+                                completion(.failure(.urlError(urlError)))
+                            case let decodingError as DecodingError:
+                                completion(.failure(.decodingError(decodingError)))
+                            default:
+                                completion(.failure(.genericError(error)))
+                        }
+                }
+            }) { response in
+                completion(.success(response.articles))
+            }
     }
 }
 

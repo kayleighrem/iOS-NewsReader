@@ -12,6 +12,5 @@ struct RegisterResponse: Decodable {
     
     enum CodingKeys: String, CodingKey {
         case accessToken = "AuthToken"
-        
     }
 }

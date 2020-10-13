@@ -1,13 +1,13 @@
 //
-//  LoginResponse.swift
+//  ArticleResponse.swift
 //  student568908
 //
-//  Created by user180971 on 10/12/20.
+//  Created by user180971 on 10/13/20.
 //
 
 import Foundation
 
-struct LoginResponse: Decodable {
+struct ArticleResponse: Decodable {
     let accessToken: String
     
     enum CodingKeys: String, CodingKey {
