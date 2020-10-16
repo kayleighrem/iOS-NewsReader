@@ -9,39 +9,39 @@ import SwiftUI
 import KeychainAccess
 
 struct ContentView: View {
-    @ObservedObject var newsReaderAPI = NewsReaderAPI.shared
+    
+//    @ObservedObject var newsReaderAPI = NewsReaderAPI.shared
     let localStorage = LocalStorage()
     @State var articles: [Articles] = []
     
     var body: some View {
         VStack {
-            if newsReaderAPI.isAuthenticated {
+            if NewsReaderAPI.shared.isAuthenticated {
                 List(articles) { article in
                     Text(article.summary)
                         .padding()
                 }
-//                .onAppear {
-//                    newsReaderAPI.getArticles { (result) in
-//                        switch result {
-//                        case .success(let articles):
-//                            self.articles = articles
-//                        case .failure(let error):
-//                            switch error {
-//                            case .urlError(let urlError):
-//                                print(urlError)
-//                            case .decodingError(let decodingError):
-//                                print(decodingError)
-//                            case .genericError(let error):
-//                                print(error)
-//                            }
-//                        }
-//                    }
-//                }
-//                Text("Hello you!")
-                    .navigationBarItems(leading: Button(action: {
-                        newsReaderAPI.logout()
+                .onAppear {
+                    NewsReaderAPI.shared.getArticle { (result) in
+                        switch result {
+                        case .success(let articles):
+                            self.articles = articles
+                        case .failure(let error):
+                            switch error {
+                            case .urlError(let urlError):
+                                print(urlError)
+                            case .decodingError(let decodingError):
+                                print(decodingError)
+                            case .genericError(let error):
+                                print(error)
+                            }
+                        }
+                    }
+                }
+                Text("Hello you!")
+                    .navigationBarItems(leading: Button(action: { NewsReaderAPI.shared.logout()
                     }, label: {
-                        Image(systemName: "escape")
+                        Image(systemName: "heart")
                     }),
                     trailing: NavigationLink(
                         destination: FavoritesView(),

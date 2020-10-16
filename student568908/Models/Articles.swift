@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 //struct Article: Codable, Identifiable {
-struct Articles: Codable, Identifiable {
+struct Articles: Decodable, Identifiable {
     var id = UUID()
     var feed : Int
     var title : String
@@ -42,7 +42,7 @@ struct GetArticleResponse: Decodable {
     }
 }
 
-//struct ArticleRequest: Encodable {
+//struct ArticleRequest: Decodable {
 //    let feed: String
 //    let title: String
 //    let summary : String

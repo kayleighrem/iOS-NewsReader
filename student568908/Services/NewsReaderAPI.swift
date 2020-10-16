@@ -10,6 +10,7 @@ import Combine
 import KeychainAccess
 
 final class NewsReaderAPI: ObservableObject {
+//final class NewsReaderAPI {
     static let shared = NewsReaderAPI()
     private let baseURL = "https://inhollandbackend.azurewebsites.net/api"
     
@@ -92,6 +93,7 @@ final class NewsReaderAPI: ObservableObject {
         password: String,
         completion: @escaping (Result<LoginResponse, RequestError>) -> Void
     ) {
+        print(username + " " + password)
         let fullurl: String = baseURL + "/Users/login"
         let url = URL(string: fullurl)!
         
@@ -132,7 +134,19 @@ final class NewsReaderAPI: ObservableObject {
     }
     
     func logout() {
+        print("test logout")
         accessToken = nil
+    }
+    
+    // (GET)Feeds
+    func getFeeds(completion: @escaping (Result<[Feeds], RequestError>) -> Void) {
+        let url = URL(string: baseURL + "/Feeds")!
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest.httpMethod = "GET"
+        
+//        print(urlRequest.allHTTPHeaderFields?.values)
+        
     }
     
     
@@ -145,14 +159,6 @@ final class NewsReaderAPI: ObservableObject {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.httpMethod = "GET"
         
-//        let parameters = ArticleRequest (
-//            username: username,
-//            password: password
-//        )
-        
-        let encoder = JSONEncoder()
-//        guard let body = try? encoder.encode(parameters) else { return }
-//        urlRequest.httpBody = body
         
         cancellable = URLSession.shared.dataTaskPublisher(for: urlRequest)
             .map({ $0.data })
@@ -162,19 +168,55 @@ final class NewsReaderAPI: ObservableObject {
                 switch result {
                     case .finished:
                         break
-                    case .failure(let error):
-                        switch result {
-                            case let urlError as URLError:
-                                completion(.failure(.urlError(urlError)))
-                            case let decodingError as DecodingError:
-                                completion(.failure(.decodingError(decodingError)))
-                            default:
-                                completion(.failure(.genericError(error)))
-                        }
+                case .failure(let error):
+                    switch error {
+                        case let urlError as URLError:
+                            completion(.failure(.urlError(urlError)))
+                        case let decodingError as DecodingError:
+                            completion(.failure(.decodingError(decodingError)))
+                        default:
+                            completion(.failure(.genericError(error)))
+                    }
                 }
             }) { response in
                 completion(.success(response.articles))
             }
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    func getArticle(completion: @escaping (Result<[Articles], RequestError>) -> Void) {
+        let url = URL(string: baseURL + "/Articles")!
+        
+        let urlRequest = URLRequest(url: url)
+        
+        cancellable = URLSession.shared.dataTaskPublisher(for: urlRequest)
+            .map({ $0.data })
+            .decode(type: GetArticleResponse.self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { result in
+                switch result {
+                    case .finished:
+                        break
+                case .failure(let error):
+                    switch error {
+                        case let urlError as URLError:
+                            completion(.failure(.urlError(urlError)))
+                        case let decodingError as DecodingError:
+                            completion(.failure(.decodingError(decodingError)))
+                        default:
+                            completion(.failure(.genericError(error)))
+                    }
+                }
+            }) { response in
+                completion(.success(response.articles))
+            }
+    }
+    
 }
 

@@ -10,7 +10,6 @@ import Foundation
 struct RegisterRequest: Encodable {
     let username: String
     let password: String
-//    let repeatPassword: String
     
     enum CodingKeys: String, CodingKey {
         case username = "UserName"

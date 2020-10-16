@@ -8,8 +8,30 @@
 import SwiftUI
 
 struct FavoritesView: View {
+    @State var feeds : [Feeds] = []
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+//        List(feeds) { feed in
+//            Text(feed.name)
+//            .padding()
+//        }.onAppear {
+//            NewsReaderAPI.shared.getFeeds() { (result) in
+//                switch result {
+//                case .success(let feeds):
+//                    self.feeds = feeds
+//                case .failure(let error):
+//                    switch error {
+//                    case .urlError(let urlError):
+//                        print(urlError)
+//                    case .decodingError(let decodingError):
+//                        print(decodingError)
+//                    case .genericError(let error):
+//                        print(error)
+//                    }
+//                }
+//            }
+//        }
+        Text("hoi test")
     }
 }
 
