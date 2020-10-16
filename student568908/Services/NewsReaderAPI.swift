@@ -135,6 +135,15 @@ final class NewsReaderAPI: ObservableObject {
         accessToken = nil
     }
     
+    // (GET)Feeds
+    func getFeeds(completion: @escaping (Result<[Feed], RequestError>) -> Void) {
+        let url = URL(string: baseURL + "/Feeds")!
+        var urlrequest = URLRequest(url: url)
+        
+        urlrequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlrequest.httpMethod = "GET"
+    }
+    
     
     // (GET)Articles
     func getArticles(completion: @escaping (Result<[Articles], RequestError>) -> Void) {
@@ -145,36 +154,6 @@ final class NewsReaderAPI: ObservableObject {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.httpMethod = "GET"
         
-//        let parameters = ArticleRequest (
-//            username: username,
-//            password: password
-//        )
-        
-        let encoder = JSONEncoder()
-//        guard let body = try? encoder.encode(parameters) else { return }
-//        urlRequest.httpBody = body
-        
-        cancellable = URLSession.shared.dataTaskPublisher(for: urlRequest)
-            .map({ $0.data })
-            .decode(type: GetArticleResponse.self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { result in
-                switch result {
-                    case .finished:
-                        break
-                    case .failure(let error):
-                        switch result {
-                            case let urlError as URLError:
-                                completion(.failure(.urlError(urlError)))
-                            case let decodingError as DecodingError:
-                                completion(.failure(.decodingError(decodingError)))
-                            default:
-                                completion(.failure(.genericError(error)))
-                        }
-                }
-            }) { response in
-                completion(.success(response.articles))
-            }
     }
 }
 

@@ -7,6 +7,9 @@
 
 import Foundation
 
-class Feed {
-    
+struct Feed: Identifiable {
+    var id = UUID()
+    var name: String
 }
+
+
