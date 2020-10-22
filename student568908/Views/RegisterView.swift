@@ -41,10 +41,21 @@ struct RegisterView: View {
                     NewsReaderAPI.shared.register(username: username, password: password) { (result) in
                         switch result {
                         case .success(let response):
-                            NewsReaderAPI.shared.accessToken = response.accessToken
-                            self.presentationMode.wrappedValue.dismiss()
-                        case .failure(_):
-                            break
+                            if response.success {
+                                self.presentationMode.wrappedValue.dismiss()
+                            } else {
+                                // TO DO bestaat al
+                            }
+                        case .failure(let error ):
+                            // TODO: error message
+                            switch error {
+                            case .urlError(let urlError):
+                                print(urlError)
+                            case .decodingError(let decodingError):
+                                print(decodingError)
+                            case .genericError(let error):
+                                print(error)
+                            }
                         }
                         self.isTryingToRegister = false
                     }

@@ -16,3 +16,12 @@ struct RegisterRequest: Encodable {
         case password = "Password"
     }
 }
+
+
+struct RegisterResponse: Decodable {
+    let success: Bool
+    
+    enum CodingKeys: String, CodingKey {
+        case success = "Success"
+    }
+}

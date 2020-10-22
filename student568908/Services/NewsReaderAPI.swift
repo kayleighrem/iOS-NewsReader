@@ -19,7 +19,7 @@ final class NewsReaderAPI: ObservableObject {
     private let keychain = Keychain()
     private var accessTokenKeychainKey = "accessToken"
     
-    private var cancellable: AnyCancellable?
+    private var cancellables: Set<AnyCancellable> = []
     
     var accessToken: String? {
         get {
@@ -63,7 +63,7 @@ final class NewsReaderAPI: ObservableObject {
         guard let body = try? encoder.encode(parameters) else { return }
         urlRequest.httpBody = body
         
-        cancellable = URLSession.shared.dataTaskPublisher(for: urlRequest)
+        URLSession.shared.dataTaskPublisher(for: urlRequest)
             .map { $0.data }
             .decode(type: RegisterResponse.self, decoder: JSONDecoder())
             .receive(on: DispatchQueue.main)
@@ -84,6 +84,7 @@ final class NewsReaderAPI: ObservableObject {
             }, receiveValue: { (resonse) in
                 completion(.success(resonse))
             })
+            .store(in: &cancellables)
 
     }
     
@@ -110,7 +111,7 @@ final class NewsReaderAPI: ObservableObject {
         guard let body = try? encoder.encode(parameters) else { return }
         urlRequest.httpBody = body
         
-        cancellable = URLSession.shared.dataTaskPublisher(for: urlRequest)
+        URLSession.shared.dataTaskPublisher(for: urlRequest)
             .map { $0.data }
             .decode(type: LoginResponse.self, decoder: JSONDecoder())
             .receive(on: DispatchQueue.main)
@@ -131,6 +132,7 @@ final class NewsReaderAPI: ObservableObject {
             }, receiveValue: { (resonse) in
                 completion(.success(resonse))
             })
+            .store(in: &cancellables)
     }
     
     func logout() {
@@ -195,7 +197,7 @@ final class NewsReaderAPI: ObservableObject {
         
         let urlRequest = URLRequest(url: url)
         
-        cancellable = URLSession.shared.dataTaskPublisher(for: urlRequest)
+        URLSession.shared.dataTaskPublisher(for: urlRequest)
             .map({ $0.data })
             .decode(type: GetArticleResponse.self, decoder: JSONDecoder())
             .receive(on: DispatchQueue.main)
@@ -214,8 +216,13 @@ final class NewsReaderAPI: ObservableObject {
                     }
                 }
             }) { response in
+<<<<<<< Updated upstream
+=======
+                print(response.articles)
+>>>>>>> Stashed changes
                 completion(.success(response.articles))
             }
+            .store(in: &cancellables)
     }
     
 }

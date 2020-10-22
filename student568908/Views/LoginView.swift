@@ -32,7 +32,7 @@ struct LoginView: View {
                     NewsReaderAPI.shared.login(username: username, password: password) { (result) in
                         switch result {
                         case .success(let response):
-                            NewsReaderAPI.shared.accessToken = response.accessToken
+                            NewsReaderAPI.shared.accessToken = response.self.accessToken
                             self.presentationMode.wrappedValue.dismiss()
                         case .failure(_):
                             break

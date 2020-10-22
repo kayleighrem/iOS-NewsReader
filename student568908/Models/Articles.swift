@@ -8,8 +8,12 @@
 import Foundation
 import Combine
 
+<<<<<<< Updated upstream
 //struct Article: Codable, Identifiable {
 struct Articles: Decodable, Identifiable {
+=======
+struct Articles: Codable, Identifiable {
+>>>>>>> Stashed changes
     var id = UUID()
     var feed : Int
     var title : String
@@ -19,7 +23,7 @@ struct Articles: Decodable, Identifiable {
     var image : String
     var isLiked : Bool
     var related : [String]
-    var categories : [String]
+    var categories : [Category]
     
     enum CodingKeys: String, CodingKey {
         case feed = "Feed"
@@ -38,10 +42,11 @@ struct GetArticleResponse: Decodable {
     let articles: [Articles]
     
     enum CodingKeys: String, CodingKey {
-        case articles = "results"
+        case articles = "Results"
     }
 }
 
+<<<<<<< Updated upstream
 //struct ArticleRequest: Decodable {
 //    let feed: String
 //    let title: String
@@ -65,3 +70,5 @@ struct GetArticleResponse: Decodable {
 //        case isLiked = "IsLiked"
 //    }
 //}
+=======
+>>>>>>> Stashed changes
