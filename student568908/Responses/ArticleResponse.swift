@@ -7,10 +7,11 @@
 
 import Foundation
 
-struct ArticleResponse: Decodable {
-    let accessToken: String
-    
-    enum CodingKeys: String, CodingKey {
-        case accessToken = "AuthToken"
-    }
-}
+//struct ArticleResponse: Decodable {
+//    let articles: [Articles]
+//    let accessToken: String
+//    
+//    enum CodingKeys: String, CodingKey {
+//        case articles = "results"
+//    }
+//}

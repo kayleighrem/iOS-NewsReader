@@ -26,6 +26,7 @@
 		4C93EB382534911B0062FCA5 /* RegisterRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C93EB372534911B0062FCA5 /* RegisterRequest.swift */; };
 		4C93EB3B253498000062FCA5 /* RegisterResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C93EB3A253498000062FCA5 /* RegisterResponse.swift */; };
 		4C93EB4C2534A1FB0062FCA5 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 4C93EB4B2534A1FB0062FCA5 /* Alamofire */; };
+		4C98710F2541886500EC9ED7 /* ArticleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C98710E2541886500EC9ED7 /* ArticleController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +49,7 @@
 		4C93EB3225348CD80062FCA5 /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 		4C93EB372534911B0062FCA5 /* RegisterRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterRequest.swift; sourceTree = "<group>"; };
 		4C93EB3A253498000062FCA5 /* RegisterResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterResponse.swift; sourceTree = "<group>"; };
+		4C98710E2541886500EC9ED7 /* ArticleController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,6 +158,7 @@
 		4C93EB4325349E300062FCA5 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				4C98710E2541886500EC9ED7 /* ArticleController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -247,6 +250,7 @@
 				4C93EB3B253498000062FCA5 /* RegisterResponse.swift in Sources */,
 				4C6D82952533B27500DEC41A /* ContentView.swift in Sources */,
 				4C6D82B42533BAF400DEC41A /* RequestError.swift in Sources */,
+				4C98710F2541886500EC9ED7 /* ArticleController.swift in Sources */,
 				4C6D82932533B27500DEC41A /* student568908App.swift in Sources */,
 				4C93EB3325348CD80062FCA5 /* RegisterView.swift in Sources */,
 				4C6D82AA2533B72D00DEC41A /* LoginRequest.swift in Sources */,

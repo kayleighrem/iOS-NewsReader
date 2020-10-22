@@ -150,10 +150,30 @@ final class NewsReaderAPI: ObservableObject {
         let fullurl: String = baseURL + "/Articles"
         let url = URL(string: fullurl)!
         
-        var urlRequest = URLRequest(url: url)
-        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        urlRequest.httpMethod = "GET"
+        let urlRequest = URLRequest(url: url)
         
+        cancellable = URLSession.shared.dataTaskPublisher(for: urlRequest)
+            .map({ $0.data })
+            .decode(type: GetArticleResponse.self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { result in
+                switch result {
+                case .finished:
+                    break
+                case .failure(let error):
+                    switch error {
+                    case let urlError as URLError:
+                        print(RequestError.urlError(urlError))
+                    case let decodingError as DecodingError:
+                        print(RequestError.decodingError(decodingError))
+                    default:
+                        print(RequestError.genericError(error))
+                    }
+                    print(error)
+                }
+            }) { response in
+                print(response.articles)
+            }
     }
 }
 
