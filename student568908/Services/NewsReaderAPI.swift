@@ -18,7 +18,7 @@ final class NewsReaderAPI: ObservableObject {
     private let keychain = Keychain()
     private var accessTokenKeychainKey = "accessToken"
     
-    private var cancellable: AnyCancellable?
+    private var cancellables: Set<AnyCancellable> = []
     
     var accessToken: String? {
         get {
@@ -46,10 +46,9 @@ final class NewsReaderAPI: ObservableObject {
         password: String,
         completion: @escaping (Result<RegisterResponse, RequestError>) -> Void
     ) {
-        let fullurl: String = baseURL + "/Users/register"
-        let url = URL(string: fullurl)!
-        
+        let url = URL(string: baseURL + "/Users/register")!
         var urlRequest = URLRequest(url: url)
+        
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.httpMethod = "POST"
         
@@ -62,7 +61,7 @@ final class NewsReaderAPI: ObservableObject {
         guard let body = try? encoder.encode(parameters) else { return }
         urlRequest.httpBody = body
         
-        cancellable = URLSession.shared.dataTaskPublisher(for: urlRequest)
+        URLSession.shared.dataTaskPublisher(for: urlRequest)
             .map { $0.data }
             .decode(type: RegisterResponse.self, decoder: JSONDecoder())
             .receive(on: DispatchQueue.main)
@@ -80,10 +79,10 @@ final class NewsReaderAPI: ObservableObject {
                             completion(.failure(.genericError(error)))
                     }
                 }
-            }, receiveValue: { (resonse) in
-                completion(.success(resonse))
+            }, receiveValue: { (response) in
+                completion(.success(response))
             })
-
+            .store(in: &cancellables)
     }
     
     // (POST)Users/login
@@ -92,10 +91,9 @@ final class NewsReaderAPI: ObservableObject {
         password: String,
         completion: @escaping (Result<LoginResponse, RequestError>) -> Void
     ) {
-        let fullurl: String = baseURL + "/Users/login"
-        let url = URL(string: fullurl)!
-        
+        let url = URL(string: baseURL + "/Users/login")!
         var urlRequest = URLRequest(url: url)
+        
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.httpMethod = "POST"
         
@@ -108,7 +106,7 @@ final class NewsReaderAPI: ObservableObject {
         guard let body = try? encoder.encode(parameters) else { return }
         urlRequest.httpBody = body
         
-        cancellable = URLSession.shared.dataTaskPublisher(for: urlRequest)
+        URLSession.shared.dataTaskPublisher(for: urlRequest)
             .map { $0.data }
             .decode(type: LoginResponse.self, decoder: JSONDecoder())
             .receive(on: DispatchQueue.main)
@@ -126,9 +124,10 @@ final class NewsReaderAPI: ObservableObject {
                             completion(.failure(.genericError(error)))
                     }
                 }
-            }, receiveValue: { (resonse) in
-                completion(.success(resonse))
+            }, receiveValue: { (response) in
+                completion(.success(response))
             })
+            .store(in: &cancellables)
     }
     
     func logout() {
@@ -152,9 +151,9 @@ final class NewsReaderAPI: ObservableObject {
         
         let urlRequest = URLRequest(url: url)
         
-        cancellable = URLSession.shared.dataTaskPublisher(for: urlRequest)
+        URLSession.shared.dataTaskPublisher(for: urlRequest)
             .map({ $0.data })
-            .decode(type: GetArticleResponse.self, decoder: JSONDecoder())
+            .decode(type: ArticleResponse.self, decoder: JSONDecoder())
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { result in
                 switch result {
@@ -173,7 +172,53 @@ final class NewsReaderAPI: ObservableObject {
                 }
             }) { response in
                 print(response.articles)
+                completion(.success(response.articles))
             }
+            .store(in: &cancellables)
     }
+    
+    
+    // (GET)Articles/{id}
+//    func getArticlesById(
+//        id: Int,
+//        completion: @escaping (Result<Articles, RequestError>) -> Void
+//    ) {
+//        let url = URL(string: baseURL + "/Articles/\(id)")!
+//        var urlRequest = URLRequest(url: url)
+//        
+//        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+//        urlRequest.httpMethod = "POST"
+//        
+////        let parameters = ArticleRequest (
+////            id: id
+////        )
+//        
+//        let encoder = JSONEncoder()
+////        guard let body = try? encoder.encode(parameters) else { return }
+////        urlRequest.httpBody = body
+//        
+//        URLSession.shared.dataTaskPublisher(for: urlRequest)
+//            .map { $0.data }
+//            .decode(type: ArticleResponse.self, decoder: JSONDecoder())
+//            .receive(on: DispatchQueue.main)
+//            .sink(receiveCompletion: { (result) in
+//                switch result {
+//                case .finished:
+//                    break
+//                case .failure(let error):
+//                    switch error {
+//                        case let urlError as URLError:
+//                            completion(.failure(.urlError(urlError)))
+//                        case let decodingError as DecodingError:
+//                            completion(.failure(.decodingError(decodingError)))
+//                        default:
+//                            completion(.failure(.genericError(error)))
+//                    }
+//                }
+//            }, receiveValue: { (response) in
+////                completion(.success(response.articles))
+//            })
+//            .store(in: &cancellables)
+//    }
 }
 

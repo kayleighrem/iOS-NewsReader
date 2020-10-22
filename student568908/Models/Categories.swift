@@ -7,6 +7,12 @@
 
 import Foundation
 
-class Category {
+class Category: Codable {
+    var id: Int
+    var name: String
     
+    enum CodingKeys: String, CodingKey {
+        case id = "Id"
+        case name = "Name"
+    }
 }

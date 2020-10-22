@@ -8,7 +8,6 @@
 import Foundation
 import Combine
 
-//struct Article: Codable, Identifiable {
 struct Articles: Codable, Identifiable {
     var id = UUID()
     var feed : Int
@@ -19,9 +18,10 @@ struct Articles: Codable, Identifiable {
     var image : String
     var isLiked : Bool
     var related : [String]
-    var categories : [String]
+    var categories : [Category]
     
     enum CodingKeys: String, CodingKey {
+//        case id = "Id"
         case feed = "Feed"
         case title = "Title"
         case summary = "Summary"
@@ -34,34 +34,20 @@ struct Articles: Codable, Identifiable {
     }
 }
 
-struct GetArticleResponse: Decodable {
+struct ArticleResponse: Decodable {
     let articles: [Articles]
     
     enum CodingKeys: String, CodingKey {
-        case articles = "results"
+        case articles = "Results"
     }
 }
 
 //struct ArticleRequest: Encodable {
-//    let feed: String
-//    let title: String
-//    let summary : String
-//    let url : URL
-//    let publishDate : String
-//    let image : String
-//    let isLiked : Bool
-//    let related : [String]
-//    let categories : [String]
+//    let article: Articles
+//    let nextid: Int
 //    
 //    enum CodingKeys: String, CodingKey {
-//        case feed = "Feed"
-//        case title = "Title"
-//        case summary = "Summary"
-//        case publishDate = " PublishDate"
-//        case image = "Image"
-//        case url = "Url"
-//        case relates = "Related"
-//        case categories = "Categories"
-//        case isLiked = "IsLiked"
+//        case article = "Results"
+//        case nextid = "NextId"
 //    }
 //}

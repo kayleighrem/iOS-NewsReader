@@ -14,28 +14,38 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            if newsReaderAPI.isAuthenticated {
-                List(articles) { article in
-                    Text(article.summary)
-                        .padding()
-                }
-                .onAppear {
-                    newsReaderAPI.getArticles { (result) in
-                        switch result {
-                        case .success(let articles):
-                            self.articles = articles
-                        case .failure(let error):
-                            switch error {
-                            case .urlError(let urlError):
-                                print(urlError)
-                            case .decodingError(let decodingError):
-                                print(decodingError)
-                            case .genericError(let error):
-                                print(error)
-                            }
+            List(articles) { article in
+//                NavigationLink(destination: Text(article.title)) {
+                    Image(article.image)
+                        .frame(width: 54, height: 54)
+                    VStack(alignment: .leading) {
+                        Text(article.title)
+                            .padding()
+                    }
+//                }
+                
+            }
+            .onAppear {
+                newsReaderAPI.getArticles { (result) in
+                    switch result {
+                    case .success(let articles):
+                        self.articles = articles
+                    case .failure(let error):
+                        switch error {
+                        case .urlError(let urlError):
+                            print(urlError)
+                        case .decodingError(let decodingError):
+                            print(decodingError)
+                        case .genericError(let error):
+                            print(error)
                         }
                     }
                 }
+            }
+
+            
+            if newsReaderAPI.isAuthenticated {
+                Text("")
                     .navigationBarItems(leading: Button(action: {
                         newsReaderAPI.logout()
                     }, label: {
@@ -49,7 +59,7 @@ struct ContentView: View {
                     )
                 )
             } else {
-                Text("We need to log in")
+                Text("Not logged in")
                     .navigationBarItems(leading: NavigationLink( destination: LoginView(),
                         label: {
                             Text("Log in")
