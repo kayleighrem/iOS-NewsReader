@@ -149,6 +149,7 @@ final class NewsReaderAPI: ObservableObject {
         let fullurl: String = baseURL + "/Articles"
         let url = URL(string: fullurl)!
         
+//        let url = URL(string: baseURL + "/Articles")!
         let urlRequest = URLRequest(url: url)
         
         URLSession.shared.dataTaskPublisher(for: urlRequest)
@@ -216,9 +217,37 @@ final class NewsReaderAPI: ObservableObject {
 //                    }
 //                }
 //            }, receiveValue: { (response) in
-////                completion(.success(response.articles))
+//                completion(.success(response.articles))
 //            })
 //            .store(in: &cancellables)
 //    }
+    
+    // (PUT)Article/{id}//like
+    func likeArticle(id: UUID) {
+        
+        print("button pressed")
+        
+        
+        let url = URL(string: baseURL + "/Articles/\(id)//like")!
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest.httpMethod = "PUT"
+        
+//        let session = URLSession(configuration: .default)
+//        let task = session.dataTask(with: urlRequest) { (data, response, error) in
+//            guard
+//                let data = data,
+//                let result = String(data: data, encoding: .utf8)
+//            else {
+//                return
+//            }
+//        }
+//        task.resume()
+    }
+    
+    
+    // (DELETE)Article/{id}//like
+    func unlikeArticle() {
+        
+    }
 }
-

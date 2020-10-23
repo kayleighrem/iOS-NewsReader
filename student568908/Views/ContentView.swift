@@ -13,66 +13,65 @@ struct ContentView: View {
     @State var articles: [Articles] = []
     
     var body: some View {
-        VStack {
-            List(articles) { article in
-//                NavigationLink(destination: Text(article.title)) {
-                    Image(article.image)
-                        .frame(width: 54, height: 54)
-                    VStack(alignment: .leading) {
-                        Text(article.title)
-                            .padding()
-                    }
-//                }
-                
-            }
-            .onAppear {
-                newsReaderAPI.getArticles { (result) in
-                    switch result {
-                    case .success(let articles):
-                        self.articles = articles
-                    case .failure(let error):
-                        switch error {
-                        case .urlError(let urlError):
-                            print(urlError)
-                        case .decodingError(let decodingError):
-                            print(decodingError)
-                        case .genericError(let error):
-                            print(error)
+        NavigationView {
+            VStack {
+                List(articles) { article in
+                    NavigationLink(destination: ArticleView(article: article)) {
+                        RemoteImage(url: article.image)
+                            .frame(width: 54, height: 54)
+                        VStack(alignment: .leading) {
+                            Text(article.title)
                         }
                     }
                 }
-            }
+                .onAppear {
+                    newsReaderAPI.getArticles { (result) in
+                        switch result {
+                        case .success(let articles):
+                            self.articles = articles
+                        case .failure(let error):
+                            switch error {
+                            case .urlError(let urlError):
+                                print(urlError)
+                            case .decodingError(let decodingError):
+                                print(decodingError)
+                            case .genericError(let error):
+                                print(error)
+                            }
+                        }
+                    }
+                }
+                if newsReaderAPI.isAuthenticated {
+                    Text("")
+                        .navigationBarItems(leading: Button(action: {
+                            newsReaderAPI.logout()
+                        }, label: {
+                            Image(systemName: "escape")
+                        }),
+                        trailing: NavigationLink(
+                            destination: FavoritesView(),
+                            label: {
+                                Image(systemName: "star")
+                            }
+                            )
+                        )
+                        } else {
+                            Text("Not logged in")
+                                .navigationBarItems(leading: NavigationLink( destination: LoginView(),
+                                    label: {
+                                        Text("Log in")
+                                    }
+                                ),
+                                trailing: NavigationLink(
+                                    destination: RegisterView(),
+                                    label: {
+                                        Text("Register")
+                                    })
+                                )
+                        }
 
-            
-            if newsReaderAPI.isAuthenticated {
-                Text("")
-                    .navigationBarItems(leading: Button(action: {
-                        newsReaderAPI.logout()
-                    }, label: {
-                        Image(systemName: "escape")
-                    }),
-                    trailing: NavigationLink(
-                        destination: FavoritesView(),
-                        label: {
-                            Image(systemName: "star")
-                        }
-                    )
-                )
-            } else {
-                Text("Not logged in")
-                    .navigationBarItems(leading: NavigationLink( destination: LoginView(),
-                        label: {
-                            Text("Log in")
-                        }
-                    ),
-                    trailing: NavigationLink(
-                        destination: RegisterView(),
-                        label: {
-                            Text("Register")
-                        })
-                    )
-            }
-        }.navigationTitle("News Reader")
+            }.navigationTitle("News")
+        }.navigationBarHidden(true)
     }
 }
 

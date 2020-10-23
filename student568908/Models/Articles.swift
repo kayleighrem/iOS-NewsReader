@@ -9,6 +9,16 @@ import Foundation
 import Combine
 
 struct Articles: Codable, Identifiable {
+    
+    func formatdate(withFormat format: String = "yyyy-dd-MM'T'HH:mm:ss") -> Date? {
+        let dateformatter = DateFormatter()
+//        dateformatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        dateformatter.dateFormat = format
+        let date = dateformatter.date(from: self.publishDate)
+        return date
+//        return dateformatter.date(from: "dd-MM-yyyy")
+    }
+    
     var id = UUID()
     var feed : Int
     var title : String
@@ -17,7 +27,7 @@ struct Articles: Codable, Identifiable {
     var publishDate : String
     var image : String
     var isLiked : Bool
-    var related : [String]
+    var related : [URL]
     var categories : [Category]
     
     enum CodingKeys: String, CodingKey {
