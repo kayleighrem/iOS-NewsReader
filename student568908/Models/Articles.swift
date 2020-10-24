@@ -19,7 +19,7 @@ struct Articles: Codable, Identifiable {
 //        return dateformatter.date(from: "dd-MM-yyyy")
     }
     
-    var id = UUID()
+    var id: Int
     var feed : Int
     var title : String
     var summary : String
@@ -31,7 +31,7 @@ struct Articles: Codable, Identifiable {
     var categories : [Category]
     
     enum CodingKeys: String, CodingKey {
-//        case id = "Id"
+        case id = "Id"
         case feed = "Feed"
         case title = "Title"
         case summary = "Summary"
@@ -62,21 +62,30 @@ struct ArticleResponse: Decodable {
 //    }
 //}
 
-//struct ArticleLikeResponse: Codable {
-//    let articles: [Articles]
-//    
-//    enum CodingKeys: String, CodingKey {
-//        case articles =
-//    }
-//}
+struct ArticleLikeResponse: Codable {
+    let id: Int
+    let isLiked: Bool
+    
+    enum CodingKeys: String, CodingKey {
+        case id = "Id"
+        case isLiked = "IsLiked"
+    }
+}
 
-struct ArticleLikeRequest: Encodable {
-    let id: UUID
-//    let article: Articles
+struct ArticleLikeResponse2: Codable {
+    let article: Articles
+    
+    enum CodingKeys: String, CodingKey {
+        case article = "Result"
+    }
+}
+
+struct ArticleLikeRequest: Codable {
+    let id: Int
     let isliked: Bool
     
     enum CodingKeys: String, CodingKey {
         case id = "Id"
-        case isliked = "isLiked"
+        case isliked = "IsLiked"
     }
 }

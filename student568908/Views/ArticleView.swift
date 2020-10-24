@@ -19,16 +19,26 @@ struct ArticleView: View {
                     .font(.system(.largeTitle, design: .rounded))
                 RemoteImage(url: article.image)
                 Text(article.summary)
+                
             }
             .padding()
-
         }
         .navigationBarTitle("News details", displayMode: .inline)
         .navigationBarItems(trailing:
             Button(
                 action: {
-                    print("like article + \(article.isLiked)")
-                    NewsReaderAPI.shared.likeArticle(id: article.id, isliked: true)
+                    print("like article = \(article.isLiked), article id = \(article.id), article = \(article)")
+                    NewsReaderAPI.shared.likeArticle(withId: article.id, isliked: true) { (result) in
+                        switch result {
+                        case .success(let response):
+                           print(response)
+                        case .failure(_):
+                            print("failed")
+                            break
+                        }
+                        print("result = ", result)
+                    }
+                    print("article liked? = \(article.isLiked)" )
                 }
             ) {
                 if self.article.isLiked {
