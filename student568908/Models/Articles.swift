@@ -61,3 +61,22 @@ struct ArticleResponse: Decodable {
 //        case nextid = "NextId"
 //    }
 //}
+
+//struct ArticleLikeResponse: Codable {
+//    let articles: [Articles]
+//    
+//    enum CodingKeys: String, CodingKey {
+//        case articles =
+//    }
+//}
+
+struct ArticleLikeRequest: Encodable {
+    let id: UUID
+//    let article: Articles
+    let isliked: Bool
+    
+    enum CodingKeys: String, CodingKey {
+        case id = "Id"
+        case isliked = "isLiked"
+    }
+}

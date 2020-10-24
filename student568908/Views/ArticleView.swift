@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct ArticleView: View {
-    let article: Articles
+    var article: Articles
+    @State var articles: [Articles] = []
+
     
     var body: some View {
         ScrollView {
             VStack {
                 Text(article.title)
                     .font(.system(.largeTitle, design: .rounded))
-//                Text(article.categories.first)
-//                Text(article.formatdate(withFormat: article.publishDate))
                 RemoteImage(url: article.image)
                 Text(article.summary)
             }
@@ -26,15 +26,17 @@ struct ArticleView: View {
         .navigationBarTitle("News details", displayMode: .inline)
         .navigationBarItems(trailing:
             Button(
-                action: { NewsReaderAPI.shared.likeArticle(id: article.id)} , 
-                label: {
-                    if article.isLiked {
-                        Image(systemName: "star.fill")
-                    } else {
-                        Image(systemName: "star")
-                    }
+                action: {
+                    print("like article + \(article.isLiked)")
+                    NewsReaderAPI.shared.likeArticle(id: article.id, isliked: true)
                 }
-            )
+            ) {
+                if self.article.isLiked {
+                    Image(systemName: "star.fill").foregroundColor(.yellow)
+                } else {
+                    Image(systemName: "star").foregroundColor(.gray)
+                }
+            }
         )
     }
 }

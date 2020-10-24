@@ -19,8 +19,15 @@ struct ContentView: View {
                     NavigationLink(destination: ArticleView(article: article)) {
                         RemoteImage(url: article.image)
                             .frame(width: 54, height: 54)
+                            .cornerRadius(20)
                         VStack(alignment: .leading) {
-                            Text(article.title)
+                            HStack {
+                                Text(article.title)
+                                    .font(.subheadline)
+                                if article.isLiked == false {
+                                    Image(systemName: "star.fill").foregroundColor(.yellow)
+                                }
+                            }
                         }
                     }
                 }
@@ -50,12 +57,11 @@ struct ContentView: View {
                         }),
                         trailing: NavigationLink(
                             destination: FavoritesView(),
+//                            action: newsReaderAPI.getLiked(),
                             label: {
                                 Image(systemName: "star")
-                            }
-                            )
-                        )
-                        } else {
+                            })
+                        )} else {
                             Text("Not logged in")
                                 .navigationBarItems(leading: NavigationLink( destination: LoginView(),
                                     label: {
@@ -69,7 +75,6 @@ struct ContentView: View {
                                     })
                                 )
                         }
-
             }.navigationTitle("News")
         }.navigationBarHidden(true)
     }

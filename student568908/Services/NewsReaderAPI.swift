@@ -148,8 +148,6 @@ final class NewsReaderAPI: ObservableObject {
     func getArticles(completion: @escaping (Result<[Articles], RequestError>) -> Void) {
         let fullurl: String = baseURL + "/Articles"
         let url = URL(string: fullurl)!
-        
-//        let url = URL(string: baseURL + "/Articles")!
         let urlRequest = URLRequest(url: url)
         
         URLSession.shared.dataTaskPublisher(for: urlRequest)
@@ -172,7 +170,6 @@ final class NewsReaderAPI: ObservableObject {
                     print(error)
                 }
             }) { response in
-                print(response.articles)
                 completion(.success(response.articles))
             }
             .store(in: &cancellables)
@@ -223,7 +220,7 @@ final class NewsReaderAPI: ObservableObject {
 //    }
     
     // (PUT)Article/{id}//like
-    func likeArticle(id: UUID) {
+    func likeArticle(id: UUID, isliked: Bool) -> Void {
         
         print("button pressed")
         
@@ -233,21 +230,79 @@ final class NewsReaderAPI: ObservableObject {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.httpMethod = "PUT"
         
-//        let session = URLSession(configuration: .default)
-//        let task = session.dataTask(with: urlRequest) { (data, response, error) in
-//            guard
-//                let data = data,
-//                let result = String(data: data, encoding: .utf8)
-//            else {
-//                return
-//            }
-//        }
-//        task.resume()
+        let parameters = ArticleLikeRequest (
+            id: id,
+            isliked: isliked
+        )
+        
+        let encoder = JSONEncoder()
+        guard let body = try? encoder.encode(parameters) else { return }
+        urlRequest.httpBody = body
+        
+        URLSession.shared.dataTaskPublisher(for: urlRequest)
+            .map { $0.data }
+            .decode(type: ArticleResponse.self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { (result) in
+//                switch result {
+//                case .finished:
+//                    break
+//                case .failure(let error):
+//                    switch error {
+//                        case let urlError as URLError:
+//                            completion(.failure(.urlError(urlError)))
+//                        case let decodingError as DecodingError:
+//                            completion(.failure(.decodingError(decodingError)))
+//                        default:
+//                            completion(.failure(.genericError(error)))
+//                    }
+//                }
+            }, receiveValue: { (response) in
+//                completion(.success(response.articles))
+            })
+            .store(in: &cancellables)
+        print(isliked)
     }
     
     
     // (DELETE)Article/{id}//like
     func unlikeArticle() {
         
+    }
+    
+    // (GET)Liked
+    func getLiked(completion: @escaping (Result<[Articles], RequestError>) -> Void) -> Void {
+        print("GET/Liked")
+        
+        let url = URL(string: baseURL + "/Articles/liked")!
+        var urlrequest = URLRequest(url: url)
+        
+        urlrequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlrequest.httpMethod = "GET"
+        
+        URLSession.shared.dataTaskPublisher(for: urlrequest)
+            .map { $0.data }
+            .decode(type: ArticleResponse.self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { (result) in
+                switch result {
+                case .finished:
+                    break
+                case .failure(let error):
+                    switch error {
+                        case let urlError as URLError:
+                            completion(.failure(.urlError(urlError)))
+                        case let decodingError as DecodingError:
+                            completion(.failure(.decodingError(decodingError)))
+                        default:
+                            completion(.failure(.genericError(error)))
+                    }
+                }
+            }, receiveValue: { (response) in
+                completion(.success(response.articles))
+            })
+            .store(in: &cancellables)
+        
+        print(completion)
     }
 }
