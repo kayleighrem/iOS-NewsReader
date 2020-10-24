@@ -10,12 +10,11 @@ import KeychainAccess
 
 struct ContentView: View {
     @ObservedObject var newsReaderAPI = NewsReaderAPI.shared
-    @State var articles: [Articles] = []
     
     var body: some View {
         NavigationView {
             VStack {
-                List(articles) { article in
+                List(newsReaderAPI.articles) { article in
                     NavigationLink(destination: ArticleView(article: article)) {
                         RemoteImage(url: article.image)
                             .frame(width: 54, height: 54)
@@ -24,8 +23,10 @@ struct ContentView: View {
                             HStack {
                                 Text(article.title)
                                     .font(.subheadline)
-                                if article.isLiked == false {
+                                if article.isLiked  {
                                     Image(systemName: "star.fill").foregroundColor(.yellow)
+                                } else if article.isLiked == false {
+                                    Image(systemName: "star").foregroundColor(.yellow)
                                 }
                             }
                         }
@@ -35,7 +36,7 @@ struct ContentView: View {
                     newsReaderAPI.getArticles { (result) in
                         switch result {
                         case .success(let articles):
-                            self.articles = articles
+                            self.newsReaderAPI.articles = articles
                         case .failure(let error):
                             switch error {
                             case .urlError(let urlError):
@@ -57,7 +58,6 @@ struct ContentView: View {
                         }),
                         trailing: NavigationLink(
                             destination: FavoritesView(),
-//                            action: newsReaderAPI.getLiked(),
                             label: {
                                 Image(systemName: "star")
                             })

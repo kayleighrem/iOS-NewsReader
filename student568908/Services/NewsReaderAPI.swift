@@ -7,13 +7,15 @@
 
 import Foundation
 import Combine
-import KeychainAccess
+import KeychainAccess 
 
 final class NewsReaderAPI: ObservableObject {
     static let shared = NewsReaderAPI()
     private let baseURL = "https://inhollandbackend.azurewebsites.net/api"
     
     @Published var isAuthenticated: Bool = false
+    @Published var articles: [Articles] = []
+    @Published var favorites: [Articles] = []
     
     private let keychain = Keychain()
     private var accessTokenKeychainKey = "accessToken"
@@ -148,7 +150,10 @@ final class NewsReaderAPI: ObservableObject {
     func getArticles(completion: @escaping (Result<[Articles], RequestError>) -> Void) {
         let fullurl: String = baseURL + "/Articles"
         let url = URL(string: fullurl)!
-        let urlRequest = URLRequest(url: url)
+        var urlRequest = URLRequest(url: url)
+        if accessToken != nil {
+            urlRequest.setValue(accessToken, forHTTPHeaderField: "x-authtoken")
+        }
         
         URLSession.shared.dataTaskPublisher(for: urlRequest)
             .map({ $0.data })
@@ -219,32 +224,19 @@ final class NewsReaderAPI: ObservableObject {
 //            .store(in: &cancellables)
 //    }
     
+    
     // (PUT)Article/{id}//like
-    func likeArticle(withId id: Int, isliked: Bool, completion: @escaping (Result<ArticleLikeResponse, RequestError>) -> Void) {
-        
-        print("button pressed")
-        
-        
+    func likeArticle(withId id: Int, completion: @escaping (Result<Data, RequestError>) -> Void) {
         let url = URL(string: baseURL + "/Articles/\(id)//like")!
         print("article id = \(id)")
         var urlRequest = URLRequest(url: url)
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.httpMethod = "PUT"
-        
-        let parameters = ArticleLikeRequest (
-            id: id,
-            isliked: isliked
-        )
-        print("parameters: ", parameters)
-        
-        let encoder = JSONEncoder()
-        guard let body = try? encoder.encode(parameters) else { return }
-        urlRequest.httpBody = body
-        
-        
+        urlRequest.setValue(accessToken, forHTTPHeaderField: "x-authtoken")
+      
         URLSession.shared.dataTaskPublisher(for: urlRequest)
             .map { $0.data }
-            .decode(type: ArticleLikeResponse.self, decoder: JSONDecoder())
+            .decode(type: Data.self, decoder: JSONDecoder())
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { (result) in
                 switch result {
@@ -261,19 +253,41 @@ final class NewsReaderAPI: ObservableObject {
                     }
                 }
             }, receiveValue: { (response) in
-//                completion(.success(response. response.article))
-//                print(response.article)
             })
             .store(in: &cancellables)
-            
-        print("isliked = ", URLSession.DataTaskPublisher.Output.self)
-        print("url: ", urlRequest)
     }
     
     
     // (DELETE)Article/{id}//like
-    func unlikeArticle() {
-        
+    func unlikeArticle(withId id: Int, completion: @escaping (Result<Data, RequestError>) -> Void) {
+        let url = URL(string: baseURL + "/Articles/\(id)//like")!
+        print("article id = \(id)")
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest.httpMethod = "DELETE"
+        urlRequest.setValue(accessToken, forHTTPHeaderField: "x-authtoken")
+      
+        URLSession.shared.dataTaskPublisher(for: urlRequest)
+            .map { $0.data }
+            .decode(type: Data.self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { (result) in
+                switch result {
+                case .finished:
+                    break
+                case .failure(let error):
+                    switch error {
+                        case let urlError as URLError:
+                            completion(.failure(.urlError(urlError)))
+                        case let decodingError as DecodingError:
+                            completion(.failure(.decodingError(decodingError)))
+                        default:
+                            completion(.failure(.genericError(error)))
+                    }
+                }
+            }, receiveValue: { (response) in
+            })
+            .store(in: &cancellables)
     }
     
     // (GET)Liked
@@ -285,6 +299,7 @@ final class NewsReaderAPI: ObservableObject {
         
         urlrequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlrequest.httpMethod = "GET"
+        urlrequest.setValue(accessToken, forHTTPHeaderField: "x-authtoken")
         
         URLSession.shared.dataTaskPublisher(for: urlrequest)
             .map { $0.data }

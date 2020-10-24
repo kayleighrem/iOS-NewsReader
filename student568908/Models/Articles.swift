@@ -9,7 +9,6 @@ import Foundation
 import Combine
 
 struct Articles: Codable, Identifiable {
-    
     func formatdate(withFormat format: String = "yyyy-dd-MM'T'HH:mm:ss") -> Date? {
         let dateformatter = DateFormatter()
 //        dateformatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
@@ -52,40 +51,12 @@ struct ArticleResponse: Decodable {
     }
 }
 
-//struct ArticleRequest: Encodable {
-//    let article: Articles
-//    let nextid: Int
-//    
-//    enum CodingKeys: String, CodingKey {
-//        case article = "Results"
-//        case nextid = "NextId"
-//    }
-//}
-
-struct ArticleLikeResponse: Codable {
-    let id: Int
-    let isLiked: Bool
-    
-    enum CodingKeys: String, CodingKey {
-        case id = "Id"
-        case isLiked = "IsLiked"
-    }
-}
-
-struct ArticleLikeResponse2: Codable {
-    let article: Articles
-    
-    enum CodingKeys: String, CodingKey {
-        case article = "Result"
-    }
-}
-
 struct ArticleLikeRequest: Codable {
     let id: Int
-    let isliked: Bool
+//    let isliked: Bool
     
     enum CodingKeys: String, CodingKey {
         case id = "Id"
-        case isliked = "IsLiked"
+//        case isliked = "IsLiked"
     }
 }
