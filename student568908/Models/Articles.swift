@@ -9,15 +9,6 @@ import Foundation
 import Combine
 
 struct Articles: Codable, Identifiable {
-    func formatdate(withFormat format: String = "yyyy-dd-MM'T'HH:mm:ss") -> Date? {
-        let dateformatter = DateFormatter()
-//        dateformatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-        dateformatter.dateFormat = format
-        let date = dateformatter.date(from: self.publishDate)
-        return date
-//        return dateformatter.date(from: "dd-MM-yyyy")
-    }
-    
     var id: Int
     var feed : Int
     var title : String
@@ -53,10 +44,8 @@ struct ArticleResponse: Decodable {
 
 struct ArticleLikeRequest: Codable {
     let id: Int
-//    let isliked: Bool
     
     enum CodingKeys: String, CodingKey {
         case id = "Id"
-//        case isliked = "IsLiked"
     }
 }

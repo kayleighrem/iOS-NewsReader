@@ -166,11 +166,11 @@ final class NewsReaderAPI: ObservableObject {
                 case .failure(let error):
                     switch error {
                     case let urlError as URLError:
-                        print(RequestError.urlError(urlError))
+                        completion(.failure(.urlError(urlError)))
                     case let decodingError as DecodingError:
-                        print(RequestError.decodingError(decodingError))
+                        completion(.failure(.decodingError(decodingError)))
                     default:
-                        print(RequestError.genericError(error))
+                        completion(.failure(.genericError(error)))
                     }
                     print(error)
                 }
@@ -179,50 +179,6 @@ final class NewsReaderAPI: ObservableObject {
             }
             .store(in: &cancellables)
     }
-    
-    
-    // (GET)Articles/{id}
-//    func getArticlesById(
-//        id: Int,
-//        completion: @escaping (Result<Articles, RequestError>) -> Void
-//    ) {
-//        let url = URL(string: baseURL + "/Articles/\(id)")!
-//        var urlRequest = URLRequest(url: url)
-//        
-//        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-//        urlRequest.httpMethod = "POST"
-//        
-////        let parameters = ArticleRequest (
-////            id: id
-////        )
-//        
-//        let encoder = JSONEncoder()
-////        guard let body = try? encoder.encode(parameters) else { return }
-////        urlRequest.httpBody = body
-//        
-//        URLSession.shared.dataTaskPublisher(for: urlRequest)
-//            .map { $0.data }
-//            .decode(type: ArticleResponse.self, decoder: JSONDecoder())
-//            .receive(on: DispatchQueue.main)
-//            .sink(receiveCompletion: { (result) in
-//                switch result {
-//                case .finished:
-//                    break
-//                case .failure(let error):
-//                    switch error {
-//                        case let urlError as URLError:
-//                            completion(.failure(.urlError(urlError)))
-//                        case let decodingError as DecodingError:
-//                            completion(.failure(.decodingError(decodingError)))
-//                        default:
-//                            completion(.failure(.genericError(error)))
-//                    }
-//                }
-//            }, receiveValue: { (response) in
-//                completion(.success(response.articles))
-//            })
-//            .store(in: &cancellables)
-//    }
     
     
     // (PUT)Article/{id}//like

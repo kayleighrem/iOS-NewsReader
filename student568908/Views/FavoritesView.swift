@@ -9,28 +9,25 @@ import SwiftUI
 
 struct FavoritesView: View {
     @ObservedObject var newsReaderAPI = NewsReaderAPI.shared
-//    @State var articles: [Articles] = []
     
     var body: some View {
         VStack {
-            // or progressbar
             if newsReaderAPI.favorites.isEmpty {
                 Text("no favorites")
             } else {
                 List(newsReaderAPI.favorites) { favorite in
-                        NavigationLink(destination: ArticleView(article: favorite)) {
-                            RemoteImage(url: favorite.image)
-                                .frame(width: 54, height: 54)
-                                .cornerRadius(20)
-                            VStack(alignment: .leading) {
-                                Text(favorite.title)
-                            }
-                            Image(systemName: "star.fill")
-                                .foregroundColor(.yellow)
+                    NavigationLink(destination: ArticleView(article: favorite)) {
+                        RemoteImage(url: favorite.image)
+                            .frame(width: 54, height: 54)
+                            .cornerRadius(20)
+                        VStack(alignment: .leading) {
+                            Text(favorite.title)
+                        }
+                        Image(systemName: "star.fill")
+                            .foregroundColor(.yellow)
+                    }
                 }
-
             }
-        }
         }
             .navigationTitle("Favorites")
             .onAppear {
@@ -52,11 +49,3 @@ struct FavoritesView: View {
             }
         }
 }
-
-
-struct FavoritesView_Previews: PreviewProvider {
-    static var previews: some View {
-        FavoritesView()
-    }
-}
-

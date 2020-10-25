@@ -44,11 +44,8 @@ struct RegisterView: View {
                             if response.success { 
                                 self.presentationMode.wrappedValue.dismiss()
                             } else {
-                                // TO DO bestaat al
                             }
-//                            NewsReaderAPI.shared.accessToken = response.accessToken
                         case .failure(let error):
-                            // TODO: error message
                             switch error {
                             case .urlError(let urlError):
                                 print(urlError)

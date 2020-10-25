@@ -28,7 +28,6 @@ struct ArticleView: View {
                                 case .urlError(let urlError):
                                     print("urlerror: ", urlError)
                                 case let decodingError as DecodingError:
-                                    print("decodingerror: ", decodingError)
                                     newsReaderAPI.favorites.removeAll(where: {$0.id == article.id})
                                     self.article.isLiked.toggle()
                                 case .genericError(let error):
@@ -71,7 +70,6 @@ struct ArticleView: View {
                 RemoteImage(url: article.image)
                 Text(article.summary)
                 Link("Button", destination: article.url)
-                
             }
             .padding()
         }
